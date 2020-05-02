@@ -1,0 +1,49 @@
+docker-compose up -d --build --no-deps eurekaserver-1 
+
+docker-compose up -d --build --no-deps cloud-gateway
+
+docker-compose up -d --build --no-deps --scale order-service=2 order-service 
+
+docker-compose up -d --build --no-deps --scale product-service=2 product-service 
+
+docker-compose up -d postgres_orders
+
+docker-compose up -d pgadmin
+
+docker-compose up -d mongodb_products
+
+docker-compose scale order-service=1
+
+docker-compose scale product-service=1
+
+INSERT INTO product (name, description, price) VALUES ('Lego', 'Lego description', 50);
+INSERT INTO product (name, description, price) VALUES ('Kaarten', 'Lego description', 20);
+INSERT INTO product (name, description, price) VALUES ('Tafel', 'Lego description', 30);
+
+INSERT INTO orders (order_id) VALUES (1);
+INSERT INTO orders (order_id) VALUES (2);
+INSERT INTO orders (order_id) VALUES (3);
+
+INSERT INTO order_line(amount, order_id, product_id) VALUES (
+2,
+1,
+1
+);
+
+INSERT INTO order_line(amount, order_id, product_id) VALUES (
+1,
+1,
+2
+);
+
+INSERT INTO order_line(amount, order_id, product_id) VALUES (
+2,
+2,
+2
+);
+
+INSERT INTO order_line(amount, order_id, product_id) VALUES (
+3,
+3,
+3
+);

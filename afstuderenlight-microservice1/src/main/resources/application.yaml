@@ -1,0 +1,25 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: MicroserviceOne
+  datasource:
+    url: jdbc:${DATASOURCE_URL:postgresql://localhost:5432}/${DATASOURCE_NAME:orders}
+    username: ${DATASOURCE_USERNAME:admin}
+    driver-class-name: org.postgresql.Driver
+    password: ${DATASOURCE_PASSWORD:root}
+    initialization-mode: never
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 3
+    lease-renewal-interval-in-seconds: 1
+  client:
+    serviceUrl:
+      defaultZone: ${DEFAULTZONE:http://localhost:8761/eureka}

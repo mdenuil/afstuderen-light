@@ -1,0 +1,117 @@
+version: '3.7'
+services:
+  eurekaserver-1:
+    container_name: eurekaserver-1
+    restart: unless-stopped
+    build:
+      context: ../eureka
+      dockerfile: ./Dockerfile
+    ports:
+      - 8761:8761
+    networks:
+      - app-network
+
+  cloud-gateway:
+    container_name: cloud-gateway
+    restart: unless-stopped
+    build:
+      context: ../gateway
+      dockerfile: ./Dockerfile
+    environment:
+      - DEFAULTZONE=http://eurekaserver-1:8761/eureka
+    depends_on:
+      - eurekaserver-1
+    ports:
+      - 8083:8083
+    networks:
+     - app-network
+
+  order-service:
+    restart: unless-stopped
+    build:
+      context: ../afstuderenlight-microservice1
+      dockerfile: ./Dockerfile
+    environment:
+      - DATASOURCE_URL=postgresql://postgres_orders:5432
+      - DATASOURCE_NAME=orders
+      - DATASOURCE_USERNAME=admin
+      - DATASOURCE_PASSWORD=root
+      - DEFAULTZONE=http://eurekaserver-1:8761/eureka
+    ports:
+      - "8080-8082:8080"
+    depends_on:
+      - eurekaserver-1
+      - postgres_orders
+    networks:
+      - app-network
+
+  product-service:
+    build:
+      context: ../afstuderenlight-microservice2
+      dockerfile: ./Dockerfile
+    environment:
+      - MONGO_USERNAME=Afstuderen
+      - MONGO_PASSWORD=Afstuderen
+      - MONGO_HOSTNAME=mongodb_products
+      - MONGO_PORT=27017
+      - MONGO_DB=products
+      - NODE_ENV=production
+    ports:
+      - "7007-7009:7007"
+    depends_on:
+      - eurekaserver-1
+      - mongodb_products
+    networks:
+      - app-network
+
+  mongodb_products:
+    container_name: mongodb_products
+    restart: unless-stopped
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Afstuderen
+      MONGO_INITDB_ROOT_PASSWORD: Afstuderen
+    networks:
+      - app-network
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_products:/data/db
+
+  postgres_orders:
+    container_name: postgres_orders
+    restart: unless-stopped
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'root'
+      POSTGRES_DB: 'orders'
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: pgadmin_container
+    restart: unless-stopped
+    image: dpage/pgadmin4
+    environment: 
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+    networks:
+      - app-network
+    volumes:
+      - pgadmin:/root/.pgadmin
+
+volumes:
+  mongodb_data_products:
+  postgres_data:
+  pgadmin:
+
+networks:
+  app-network:
+    driver: bridge

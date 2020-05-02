@@ -1,0 +1,11 @@
+@import '../../../_theme.scss';
+
+.order-item {
+    width: 300px;
+    margin-bottom: 30px !important;
+}
+
+.mat-list > .mat-list-item:hover {
+    background-color: mat-color($app-primary, 100) !important;
+    cursor: pointer;
+}
