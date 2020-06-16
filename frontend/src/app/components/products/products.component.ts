@@ -24,15 +24,19 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.productService.getProducts()
       .pipe(finalize(() => this.loading = false))
-      .subscribe((products) => this.products = products);
+      .subscribe((products) => {
+        this.products = products;
+        console.log(this.products);
+      });
   }
 
   addToShoppingCart(product: Product) {
+    console.log(product);
     this.shoppingCartService.addProduct(product);
   }
 
   checkShoppingCart(product: Product) {
-    const orderItem: OrderLine = this.shoppingCartService.inShoppingCart(product.id);
+    const orderItem: OrderLine = this.shoppingCartService.inShoppingCart(product);
 
     if (orderItem) {
       return orderItem.amount;

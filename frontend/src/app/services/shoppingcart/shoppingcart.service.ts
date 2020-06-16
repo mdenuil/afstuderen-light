@@ -1,23 +1,18 @@
 import { Injectable } from '@angular/core';
 import { OrderLine } from 'src/app/models/orderline.model';
 import { ShoppingCart } from 'src/app/models/shoppingcart.model';
-import { Subject } from 'rxjs';
 import { Product } from 'src/app/models/product.model';
-import { isNgTemplate } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShoppingcartService {
-  public amountOfProducts: Subject<number> = new Subject();
   private readonly shoppingcart: ShoppingCart = { items: [] };
 
   constructor() {}
 
   public addProduct(product: Product) {
-    const orderItem = this.shoppingcart.items.find(
-      (item) => item.product.id === product.id
-    );
+    const orderItem: OrderLine = this.shoppingcart.items.find((item) => item.product == product);
 
     if (!orderItem) {
       const newOrderItem: OrderLine = {
@@ -32,7 +27,7 @@ export class ShoppingcartService {
 
     this.updateItemCounter();
 
-    console.log(this.shoppingcart);
+    console.log(this.shoppingcart)
   }
 
   private updateItemCounter(): void {
@@ -41,8 +36,6 @@ export class ShoppingcartService {
     for (const item of this.shoppingcart.items) {
       total += item.amount;
     }
-
-    this.amountOfProducts.next(total);
   }
 
   getItems(): Array<OrderLine> {
@@ -59,7 +52,7 @@ export class ShoppingcartService {
     return total;
   }
 
-  inShoppingCart(id: number): OrderLine {
-    return this.shoppingcart.items.find(item => item.product.id === id);
+  inShoppingCart(product: Product): OrderLine {
+    return this.shoppingcart.items.find(item => item.product == product);
   }
 }
