@@ -26,8 +26,6 @@ export class ShoppingcartService {
     }
 
     this.updateItemCounter();
-
-    console.log(this.shoppingcart)
   }
 
   private updateItemCounter(): void {

@@ -24,14 +24,10 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.productService.getProducts()
       .pipe(finalize(() => this.loading = false))
-      .subscribe((products) => {
-        this.products = products;
-        console.log(this.products);
-      });
+      .subscribe((products) => this.products = products);
   }
 
   addToShoppingCart(product: Product) {
-    console.log(product);
     this.shoppingCartService.addProduct(product);
   }
 
